@@ -1,0 +1,6 @@
+data/com.jeb.ez_commands.desktop.in
+data/com.jeb.ez_commands.appdata.xml.in
+data/com.jeb.ez_commands.gschema.xml
+src/main.c
+src/ez_commands-window.c
+src/ez_commands-window.ui

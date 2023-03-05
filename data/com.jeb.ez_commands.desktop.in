@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=ez_commands
+Exec=ez_commands
+Icon=com.jeb.ez_commands
+Terminal=false
+Type=Application
+Categories=GTK;
+StartupNotify=true
