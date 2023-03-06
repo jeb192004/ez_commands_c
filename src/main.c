@@ -100,13 +100,7 @@ activate (GtkApplication *app,
   g_object_set_data(G_OBJECT(window), "entry2", command_entry);
 
   box = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
-  //gtk_widget_set_halign (box, GTK_ALIGN_CENTER);
-  //gtk_widget_set_valign (box, GTK_ALIGN_CENTER);
-
   gtk_box_append (GTK_BOX(main_box), box);
-
-  //g_signal_connect (button, "clicked", G_CALLBACK (load_commands_file), NULL);
-
 // Create a scrolled window to contain the box
     GtkWidget *scrolled_window = gtk_scrolled_window_new();
     gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window),GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
@@ -120,10 +114,16 @@ activate (GtkApplication *app,
   gtk_box_append (GTK_BOX(box), scrolled_window);
   //GET COMMANDS FILE
   const guint8 *data = get_commands_file("./Documents/ez_commands.json");
-  //PARSE COMMANDS FILE AND RETURN JSON ARRAY
-  jsonArray = parse_json((const gchar *)data);
-  //LOAD LIST OF COMMANDS FROM JSON ARRAY, THEN LOAD LIST
-  build_list();
+  if(data==0){
+    g_print ("%s\n", "ez_command.json file does't exist");
+    create_ez_commands_json();
+  }else{
+    //PARSE COMMANDS FILE AND RETURN JSON ARRAY
+    jsonArray = parse_json((const gchar *)data);
+    //LOAD LIST OF COMMANDS FROM JSON ARRAY, THEN LOAD LIST
+    build_list();
+  }
+
 
   gtk_widget_show (window);
 }
@@ -142,3 +142,4 @@ main (int    argc,
 
   return status;
 }
+
