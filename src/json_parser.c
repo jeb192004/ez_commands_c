@@ -6,6 +6,7 @@
 #include "my_clipboard.h"
 
 extern JsonNode *jsonArray;
+extern GtkWidget *commands_container;
 JsonNode* parse_json(const gchar* str) {
 
     gchar *json_string = str;
@@ -25,7 +26,7 @@ JsonNode* parse_json(const gchar* str) {
     return root;
 }
 
-void build_list(GtkWidget *box2){
+void build_list(void){
 
   if (JSON_NODE_HOLDS_ARRAY(jsonArray)) {
         JsonArray *array = json_node_get_array(jsonArray);
@@ -41,7 +42,7 @@ void build_list(GtkWidget *box2){
               const double id = json_node_get_double(id_node);
               const gchar *command = json_node_get_string(command_node);
               //g_print("Element %u: ID=%g -> Name=%s -> COMMAND=%s \n", i, id, name, command);
-              build_list_item(box2, id, name, command);
+              build_list_item(id, name, command);
 
 
         } else {
@@ -118,12 +119,9 @@ copy = NULL;
               const gchar *name = json_node_get_string(name_node);
               const double id = json_node_get_double(id_node);
               const gchar *command = json_node_get_string(command_node);
-              printf("First half of string: %s\n", substr);
               if(strcmp(substr, "copy") ==0 ||strcmp(substr, "clone") == 0||strcmp(substr, "push") ==0||strcmp(substr, "pull") ==0){
-                g_print ("%s\n", "working here");
                 if (new_id == id) {
                   gchar *new_command;
-                  g_print("\n%s\n", substr);
                   if(strcmp(substr, "clone")==0){
                     new_command = replace (command, "git push", "git clone");
                     new_command = replace (command, "git pull", "git clone");
@@ -137,6 +135,8 @@ copy = NULL;
                     new_command = replace (command, "git push", "git pull");
                     copy_text_to_clipboard (new_command);
 
+                  }else if(strcmp(substr, "copy")==0){
+                    copy_text_to_clipboard (command);
                   }
                 }
               }else{g_print ("%s\n", "command needed doesn't match copy, clone, push, or pull");}
@@ -195,6 +195,7 @@ void build_json_with_new_command(gchar *title, gchar *command){
   char *json_string = json_to_string(node, FALSE);
   g_print("JSON array: %s\n", json_string);
   save_commands_file(json_string);
+  build_list_item(length+1, title, command);
   // Free the memory used by the JsonNode and the string
   g_free(json_string);
   json_node_free(node);

@@ -2,13 +2,14 @@
 
 #include "json_parser.h"
 
+extern GtkWidget *commands_container;
 
 void command_button_clicked(GtkButton *button, gpointer user_data) {
 
     gchar* text = (gchar*)user_data;
     run_command (text);
 }
-void build_list_item(GtkWidget *box2, double id, gchar *name, gchar *command){
+void build_list_item(double id, gchar *name, gchar *command){
 
   //gtk_widget_set_halign (box2, GTK_ALIGN_CENTER);
   GtkWidget *label = gtk_label_new (name);
@@ -50,7 +51,7 @@ void build_list_item(GtkWidget *box2, double id, gchar *name, gchar *command){
   gtk_widget_set_margin_top (separator, 5);
   gtk_widget_set_margin_top (separator, 5);
   gtk_box_append(GTK_BOX(list_item_row_container), separator);
-  gtk_box_append(GTK_BOX(box2), list_item_row_container);
+  gtk_box_append(GTK_BOX(commands_container), list_item_row_container);
 }
 
 

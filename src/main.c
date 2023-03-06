@@ -30,6 +30,7 @@
 #include "get_commands_file.h"
 
 JsonNode *jsonArray;
+GtkWidget *commands_container;
 
 void on_button_clicked(GtkButton *button, gpointer user_data) {
   /* Get the text from the first entry */
@@ -61,7 +62,7 @@ activate (GtkApplication *app,
 
   //CREATE THE WINDOW
   GtkWidget *window = gtk_application_window_new (app);
-  gtk_window_set_title (GTK_WINDOW (window), "Window");
+  gtk_window_set_title (GTK_WINDOW (window), "Ez Commands");
   gtk_window_set_default_size (GTK_WINDOW (window), 500, 400);
 
   //CREATE THE MAIN CONTAINER
@@ -110,7 +111,7 @@ activate (GtkApplication *app,
     GtkWidget *scrolled_window = gtk_scrolled_window_new();
     gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window),GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
   //CONTAINER FOR ALL LIST ITEMS FOR COMMANDS
-  GtkWidget *commands_container = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
+  commands_container = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
   gtk_widget_set_hexpand(commands_container, TRUE);
   gtk_widget_set_vexpand(commands_container, TRUE);
   gtk_widget_set_margin_top (commands_container, 10);
@@ -122,7 +123,7 @@ activate (GtkApplication *app,
   //PARSE COMMANDS FILE AND RETURN JSON ARRAY
   jsonArray = parse_json((const gchar *)data);
   //LOAD LIST OF COMMANDS FROM JSON ARRAY, THEN LOAD LIST
-  build_list(commands_container);
+  build_list();
 
   gtk_widget_show (window);
 }
