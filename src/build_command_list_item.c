@@ -9,6 +9,35 @@ void command_button_clicked(GtkButton *button, gpointer user_data) {
     gchar* text = (gchar*)user_data;
     run_command (text);
 }
+
+void remove_command(GtkWidget *button, gpointer user_data){
+  gchar* text = (gchar*)user_data;
+  gchar *gstr = text;
+    char str[strlen(gstr) + 1]; // allocate memory for C string
+    strcpy(str, gstr); // copy gchar string to C string
+    printf("C string: %s\n", str);
+
+    char *pos = strstr(str, "_");
+    char *aft_delimiter;
+    double new_id;
+    if (pos) {
+        *pos = '\0'; // replace delimiter with null character
+        aft_delimiter = pos + 1;
+        new_id = atoi(aft_delimiter);
+        printf("First half of string: %s\n", aft_delimiter);
+    } else {
+        printf("Delimiter not found.\n");
+    }
+  GtkWidget *parent_container = gtk_widget_get_parent(button);
+  GtkWidget *parents_parent_container = gtk_widget_get_parent(parent_container);
+  if (parent_container != NULL) {
+      g_print("%s %f", "parent exist", new_id);
+      remove_command_from_json(new_id);
+      gtk_widget_unparent(parents_parent_container);
+
+  }
+}
+
 void build_list_item(double id, gchar *name, gchar *command){
 
   //gtk_widget_set_halign (box2, GTK_ALIGN_CENTER);
@@ -43,9 +72,12 @@ void build_list_item(double id, gchar *name, gchar *command){
   }
   GtkWidget *edit_button = gtk_button_new_with_label ("Edit");
   gtk_grid_attach(GTK_GRID(button_grid), edit_button, 5, 0, 1, 1);
+
   GtkWidget *remove_button = gtk_button_new_with_label ("Remove");
   gtk_grid_attach(GTK_GRID(button_grid), remove_button, 6, 0, 1, 1);
   gtk_box_append (GTK_BOX (list_item_row_container), GTK_WIDGET(button_grid));
+  g_signal_connect(remove_button, "clicked", G_CALLBACK(remove_command), g_strdup_printf("%s%g", "remove_", id));
+
   // Create the separator
   GtkWidget *separator = gtk_separator_new(GTK_ORIENTATION_HORIZONTAL);
   gtk_widget_set_margin_top (separator, 5);

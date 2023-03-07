@@ -60,6 +60,11 @@ activate (GtkApplication *app,
   GtkWidget *main_box, *box;
   GtkWidget *title_entry, *command_entry;
 
+
+  // Use the system theme
+    GtkSettings *settings = gtk_settings_get_default();
+    g_object_set(settings, "gtk-application-prefer-dark-theme", TRUE, NULL);
+
   //CREATE THE WINDOW
   GtkWidget *window = gtk_application_window_new (app);
   gtk_window_set_title (GTK_WINDOW (window), "Ez Commands");
