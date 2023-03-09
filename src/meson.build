@@ -6,6 +6,7 @@ ez_commands_sources = [
   'get_commands_file.c',
   'build_command_list_item.c',
   'replace.c',
+  'dialogs.c',
 ]
 
 ez_commands_deps = [

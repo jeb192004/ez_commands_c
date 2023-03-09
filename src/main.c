@@ -28,9 +28,13 @@
 #include "my_clipboard.h"
 #include "json_parser.h"
 #include "get_commands_file.h"
+#include "build_command_list_item.h"
+#include "dialogs.h"
+
 
 JsonNode *jsonArray;
-GtkWidget *commands_container;
+GtkWidget *commands_container, *window;
+
 
 void on_button_clicked(GtkButton *button, gpointer user_data) {
   /* Get the text from the first entry */
@@ -66,11 +70,11 @@ activate (GtkApplication *app,
     g_object_set(settings, "gtk-application-prefer-dark-theme", TRUE, NULL);
 
   //CREATE THE WINDOW
-  GtkWidget *window = gtk_application_window_new (app);
+  window = gtk_application_window_new (app);
   gtk_window_set_title (GTK_WINDOW (window), "Ez Commands");
   gtk_window_set_default_size (GTK_WINDOW (window), 500, 400);
 
-  //CREATE THE MAIN CONTAINER
+
   main_box = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
   gtk_widget_set_margin_top (main_box, 10);
   gtk_widget_set_margin_start (main_box, 10);

@@ -10,7 +10,9 @@ void run_command(gchar *buttonId);
 void build_json_with_new_command(gchar *title, gchar *command);
 guint get_json_size(void);
 void remove_command_from_json(double id);
+void edit_json_with_new_command(gchar *new_title, gchar *new_command, double new_id);
 #endif /* JSON_PARSER_H */
+
 
 
 

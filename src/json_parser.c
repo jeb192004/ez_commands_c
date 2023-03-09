@@ -26,6 +26,8 @@ JsonNode* parse_json(const gchar* str) {
     return root;
 }
 
+
+
 void build_list(void){
 
   if (JSON_NODE_HOLDS_ARRAY(jsonArray)) {
@@ -248,3 +250,59 @@ void remove_command_from_json(double id_to_remove){
     }else{g_error ("JSON IS NOT AN ARRAY");}
 
 }
+
+void edit_json_with_new_command(gchar *new_title, gchar *new_command, double new_id){
+  g_print ("\n%f\n", new_id);
+  JsonArray *new_array = json_array_new ();
+
+  if (JSON_NODE_HOLDS_ARRAY(jsonArray)) {
+        JsonArray *array = json_node_get_array(jsonArray);
+        guint len = json_array_get_length(array);
+        for (guint i = 0; i < len; i++) {
+            JsonNode *node = json_array_get_element(array, i);
+            if (JSON_NODE_HOLDS_OBJECT(node)) {
+            JsonObject *object = json_node_get_object(node);
+            JsonNode *name_node = json_object_get_member(object, "name");
+              JsonNode *id_node = json_object_get_member(object, "id");
+              JsonNode *command_node = json_object_get_member(object, "command");
+              const gchar *name = json_node_get_string(name_node);
+              const double id = json_node_get_double(id_node);
+              const gchar *command = json_node_get_string(command_node);
+              if(id!=new_id){
+                JsonNode *node1 = json_node_new (JSON_NODE_OBJECT);
+              JsonObject *object1 = json_object_new();
+              json_object_set_int_member(object1, "id", id);
+              json_object_set_string_member(object1, "name", name);
+              json_object_set_string_member (object1, "command", command);
+              json_node_set_object(node1, object1);
+              json_array_add_element(new_array, node1);
+              }else if(id==new_id){
+                JsonNode *node1 = json_node_new (JSON_NODE_OBJECT);
+              JsonObject *object1 = json_object_new();
+              json_object_set_int_member(object1, "id", id);
+              json_object_set_string_member(object1, "name", new_title);
+              json_object_set_string_member (object1, "command", new_command);
+              json_node_set_object(node1, object1);
+              json_array_add_element(new_array, node1);
+              }
+
+
+
+
+        } else {
+            g_printerr("Array element %u is not an object\n", i);
+        }
+      }
+      // Convert the array to a JsonNode object
+      JsonNode *node = json_node_new(JSON_NODE_ARRAY);
+      json_node_set_array(node, new_array);
+
+      // Print the JSON data
+      char *json_string = json_to_string(node, FALSE);
+      //g_print("JSON array: %s\n", json_string);
+      save_commands_file (json_string);
+      build_list_item(new_id, new_title, new_command);
+    }else{g_error ("JSON IS NOT AN ARRAY");}
+
+}
+

@@ -1,6 +1,7 @@
 #include <gtk/gtk.h>
 
 #include "json_parser.h"
+#include "dialogs.h"
 
 extern GtkWidget *commands_container;
 
@@ -11,6 +12,7 @@ void command_button_clicked(GtkButton *button, gpointer user_data) {
 }
 
 void remove_command(GtkWidget *button, gpointer user_data){
+
   gchar* text = (gchar*)user_data;
   gchar *gstr = text;
     char str[strlen(gstr) + 1]; // allocate memory for C string
@@ -30,12 +32,33 @@ void remove_command(GtkWidget *button, gpointer user_data){
     }
   GtkWidget *parent_container = gtk_widget_get_parent(button);
   GtkWidget *parents_parent_container = gtk_widget_get_parent(parent_container);
-  if (parent_container != NULL) {
-      g_print("%s %f", "parent exist", new_id);
-      remove_command_from_json(new_id);
-      gtk_widget_unparent(parents_parent_container);
+    warning_dialog(parents_parent_container, "Are you sure you want to remove that command?\n\nThis can not be undone.", new_id);
 
-  }
+}
+
+void edit_command(GtkWidget *button, gpointer user_data){
+
+  gchar* text = (gchar*)user_data;
+  gchar *gstr = text;
+    char str[strlen(gstr) + 1]; // allocate memory for C string
+    strcpy(str, gstr); // copy gchar string to C string
+    printf("C string: %s\n", str);
+
+    char *pos = strstr(str, "_");
+    char *aft_delimiter;
+    double new_id;
+    if (pos) {
+        *pos = '\0'; // replace delimiter with null character
+        aft_delimiter = pos + 1;
+        new_id = atoi(aft_delimiter);
+        printf("First half of string: %s\n", aft_delimiter);
+    } else {
+        printf("Delimiter not found.\n");
+    }
+  GtkWidget *parent_container = gtk_widget_get_parent(button);
+  GtkWidget *parents_parent_container = gtk_widget_get_parent(parent_container);
+  edit_dialog(parents_parent_container, new_id);
+
 }
 
 void build_list_item(double id, gchar *name, gchar *command){
@@ -70,14 +93,25 @@ void build_list_item(double id, gchar *name, gchar *command){
       g_signal_connect(copy, "clicked", G_CALLBACK(command_button_clicked), copy_command);
       gtk_grid_attach(GTK_GRID(button_grid), copy, 0, 0, 1, 1);
   }
+
+  gchar *edit_command_id  = g_strdup_printf("%s%g", "edit_", id);
   GtkWidget *edit_button = gtk_button_new_with_label ("Edit");
+  g_signal_connect(edit_button, "clicked", G_CALLBACK(edit_command), edit_command_id);
   gtk_grid_attach(GTK_GRID(button_grid), edit_button, 5, 0, 1, 1);
 
   GtkWidget *remove_button = gtk_button_new_with_label ("Remove");
+GtkStyleContext *context;
+  //gtk_style_context_set_back
+  context = gtk_widget_get_style_context (GTK_WIDGET (remove_button));
+  // Add a class to the button
+  gtk_widget_add_css_class(GTK_WIDGET(remove_button), "remove_button");
+  GtkCssProvider *provider = gtk_css_provider_new ();
+  gtk_css_provider_load_from_data (provider, ".remove_button {color: red; font-size: 12pt;} button{padding:10px;}", -1);
+  gtk_style_context_add_provider (context, GTK_STYLE_PROVIDER (provider), GTK_STYLE_PROVIDER_PRIORITY_USER);
   gtk_grid_attach(GTK_GRID(button_grid), remove_button, 6, 0, 1, 1);
-  gtk_box_append (GTK_BOX (list_item_row_container), GTK_WIDGET(button_grid));
-  g_signal_connect(remove_button, "clicked", G_CALLBACK(remove_command), g_strdup_printf("%s%g", "remove_", id));
-
+  gchar *remove_command_id  = g_strdup_printf("%s%g", "remove_", id);
+      g_signal_connect(remove_button, "clicked", G_CALLBACK(remove_command), remove_command_id);
+  gtk_box_append (GTK_BOX(list_item_row_container), GTK_WIDGET(button_grid));
   // Create the separator
   GtkWidget *separator = gtk_separator_new(GTK_ORIENTATION_HORIZONTAL);
   gtk_widget_set_margin_top (separator, 5);
