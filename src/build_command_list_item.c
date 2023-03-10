@@ -70,9 +70,15 @@ void build_list_item(double id, gchar *name, gchar *command){
   GtkGrid *button_grid = GTK_GRID(gtk_grid_new());
   gtk_grid_set_column_spacing(button_grid, 10);
   gtk_grid_set_row_spacing(button_grid, 10);
+  GtkWidget *button_grid2 = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 10);
+  gtk_widget_set_hexpand (button_grid2, TRUE);
+  //gtk_grid_set_column_spacing(button_grid2, 10);
+  //gtk_grid_set_row_spacing(button_grid2, 10);
   GtkWidget *list_item_row_container = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
   gtk_widget_set_margin_top (list_item_row_container, 10);
   gtk_box_append (GTK_BOX (list_item_row_container), label);
+  GtkWidget *fixed_container = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 10);
+  gtk_widget_set_hexpand (fixed_container, TRUE);
 
   if (strstr(command, "git clone") != NULL || strstr(command, "git push") != NULL || strstr(command, "git pull") != NULL) {
       GtkWidget *clone = gtk_button_new_with_label ("Clone");
@@ -94,10 +100,12 @@ void build_list_item(double id, gchar *name, gchar *command){
       gtk_grid_attach(GTK_GRID(button_grid), copy, 0, 0, 1, 1);
   }
 
+  gtk_box_append(GTK_BOX(fixed_container), GTK_WIDGET(button_grid));
+
   gchar *edit_command_id  = g_strdup_printf("%s%g", "edit_", id);
   GtkWidget *edit_button = gtk_button_new_with_label ("Edit");
   g_signal_connect(edit_button, "clicked", G_CALLBACK(edit_command), edit_command_id);
-  gtk_grid_attach(GTK_GRID(button_grid), edit_button, 5, 0, 1, 1);
+  gtk_box_append(GTK_BOX(button_grid2), edit_button);
 
   GtkWidget *remove_button = gtk_button_new_with_label ("Remove");
 GtkStyleContext *context;
@@ -108,10 +116,13 @@ GtkStyleContext *context;
   GtkCssProvider *provider = gtk_css_provider_new ();
   gtk_css_provider_load_from_data (provider, ".remove_button {color: red; font-size: 12pt;} button{padding:10px;}", -1);
   gtk_style_context_add_provider (context, GTK_STYLE_PROVIDER (provider), GTK_STYLE_PROVIDER_PRIORITY_USER);
-  gtk_grid_attach(GTK_GRID(button_grid), remove_button, 6, 0, 1, 1);
+  gtk_box_append(GTK_BOX(button_grid2), remove_button);
   gchar *remove_command_id  = g_strdup_printf("%s%g", "remove_", id);
-      g_signal_connect(remove_button, "clicked", G_CALLBACK(remove_command), remove_command_id);
-  gtk_box_append (GTK_BOX(list_item_row_container), GTK_WIDGET(button_grid));
+  g_signal_connect(remove_button, "clicked", G_CALLBACK(remove_command), remove_command_id);
+  gtk_box_append(GTK_BOX(fixed_container), GTK_WIDGET(button_grid2));
+  gtk_widget_set_halign(GTK_WIDGET(button_grid2), GTK_ALIGN_END);
+
+  gtk_box_append (GTK_BOX(list_item_row_container), GTK_WIDGET(fixed_container));
   // Create the separator
   GtkWidget *separator = gtk_separator_new(GTK_ORIENTATION_HORIZONTAL);
   gtk_widget_set_margin_top (separator, 5);
