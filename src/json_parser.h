@@ -3,15 +3,21 @@
 
 #include <glib.h>
 #include <json-glib/json-glib.h>
+#include <gtk/gtk.h>
 //void my_function(gint my_variable);
 JsonNode* parse_json(const gchar* text);
-void build_list(void);
+void build_list(GtkWidget *window);
 void run_command(gchar *buttonId);
-void build_json_with_new_command(gchar *title, gchar *command);
+void build_json_with_new_command(gchar *title, gchar *command, GtkWidget *window);
 guint get_json_size(void);
 void remove_command_from_json(double id);
-void edit_json_with_new_command(gchar *new_title, gchar *new_command, double new_id);
+void edit_json_with_new_command(gchar *new_title, gchar *new_command, double new_id, GtkWidget *window);
+double generate_new_id(void);
 #endif /* JSON_PARSER_H */
+
+
+
+
 
 
 

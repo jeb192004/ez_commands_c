@@ -1,12 +1,27 @@
 #include <gtk/gtk.h>
 #include <json-glib/json-glib.h>
+#include <time.h>
 
+
+//MY LOCAL FILES TO INCLUDE
 #include "build_command_list_item.h"
 #include "replace.h"
 #include "my_clipboard.h"
 
 extern JsonNode *jsonArray;
 extern GtkWidget *commands_container;
+
+double generate_new_id(void){
+  double new_id;
+
+  time_t now = time(NULL);
+    struct tm *t = localtime(&now);
+    char id[32];
+    strftime(id, sizeof(id), "%Y%m%d%H%M%S", t);
+    new_id = strtod(id, NULL);
+
+  return new_id;
+}
 JsonNode* parse_json(const gchar* str) {
 
     gchar *json_string = str;
@@ -28,7 +43,7 @@ JsonNode* parse_json(const gchar* str) {
 
 
 
-void build_list(void){
+void build_list(GtkWidget *window){
 
   if (JSON_NODE_HOLDS_ARRAY(jsonArray)) {
         JsonArray *array = json_node_get_array(jsonArray);
@@ -43,8 +58,8 @@ void build_list(void){
               const gchar *name = json_node_get_string(name_node);
               const double id = json_node_get_double(id_node);
               const gchar *command = json_node_get_string(command_node);
-              //g_print("Element %u: ID=%g -> Name=%s -> COMMAND=%s \n", i, id, name, command);
-              build_list_item(id, name, command);
+              g_print("Element %u: ID=%g -> Name=%s -> COMMAND=%s \n", i, id, name, command);
+              build_list_item(id, name, command, window);
 
 
         } else {
@@ -55,41 +70,7 @@ void build_list(void){
 }
 
 void run_command(gchar *buttonText){
-  /*
-  // get how long the text is, will never be bigger than this.
-int txtlen = strlen(buttonText);
 
-// Now lets allocate..
-char *copy = (char *)malloc(txtlen+1);
-if (copy == NULL) {
- // .. do usual error handling
-}
-
-// Now lets copy over the string.
-strcpy(copy, buttonText);
-
-// Print it out to see that it worked..
-// replace this with what you use.
-printf("Copy of buttonText: %s\n", copy);
-
-// Declare stuff we need
-char* command_needed = NULL;
-char* command_id = NULL;
-int new_id = 0;
-
-//  char* token = strtok(buttonText, "_");
-//  char* command_needed = token;
-//  token = strtok(NULL, "_");
-//  char* command_id = token;
-//  double new_id = strtod(command_id, NULL);
-
-command_needed = strtok(copy, "_");
-command_id = strtok(NULL, "_");
-new_id = atoi(command_id);
-g_print ("command_needed: before loop:%s\n", command_needed);
-free(copy);
-copy = NULL;
-*/
     gchar *gstr = buttonText;
     char str[strlen(gstr) + 1]; // allocate memory for C string
     strcpy(str, gstr); // copy gchar string to C string
@@ -177,11 +158,11 @@ void save_commands_file(const gchar* json_string) {
 
 
 
-void build_json_with_new_command(gchar *title, gchar *command){
-  guint length = get_json_size();
+void build_json_with_new_command(gchar *title, gchar *command, GtkWidget *window){
+  double id = generate_new_id();
   JsonNode *node1 = json_node_new (JSON_NODE_OBJECT);
   JsonObject *object1 = json_object_new();
-  json_object_set_int_member(object1, "id", length+1);
+  json_object_set_int_member(object1, "id", id);
   json_object_set_string_member(object1, "name", title);
   json_object_set_string_member (object1, "command", command);
   json_node_set_object(node1, object1);
@@ -197,7 +178,7 @@ void build_json_with_new_command(gchar *title, gchar *command){
   char *json_string = json_to_string(node, FALSE);
   g_print("JSON array: %s\n", json_string);
   save_commands_file(json_string);
-  build_list_item(length+1, title, command);
+  build_list_item(id, title, command, window);
   // Free the memory used by the JsonNode and the string
   g_free(json_string);
   json_node_free(node);
@@ -251,7 +232,7 @@ void remove_command_from_json(double id_to_remove){
 
 }
 
-void edit_json_with_new_command(gchar *new_title, gchar *new_command, double new_id){
+void edit_json_with_new_command(gchar *new_title, gchar *new_command, double new_id, GtkWidget *window){
   g_print ("\n%f\n", new_id);
   JsonArray *new_array = json_array_new ();
 
@@ -301,7 +282,7 @@ void edit_json_with_new_command(gchar *new_title, gchar *new_command, double new
       char *json_string = json_to_string(node, FALSE);
       //g_print("JSON array: %s\n", json_string);
       save_commands_file (json_string);
-      build_list_item(new_id, new_title, new_command);
+      build_list_item(new_id, new_title, new_command, window);
     }else{g_error ("JSON IS NOT AN ARRAY");}
 
 }

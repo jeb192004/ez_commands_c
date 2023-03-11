@@ -32,13 +32,20 @@ void remove_command(GtkWidget *button, gpointer user_data){
     }
   GtkWidget *parent_container = gtk_widget_get_parent(button);
   GtkWidget *parents_parent_container = gtk_widget_get_parent(parent_container);
-    warning_dialog(parents_parent_container, "Are you sure you want to remove that command?\n\nThis can not be undone.", new_id);
+  GtkWidget *container_to_remove = gtk_widget_get_parent(parents_parent_container);
+    warning_dialog(container_to_remove, "Are you sure you want to remove that command?\n\nThis can not be undone.", new_id);
 
 }
 
-void edit_command(GtkWidget *button, gpointer user_data){
+typedef struct {
+    gchar *id;
+    GtkWidget *WindowWidget;
+} editValues;
 
-  gchar* text = (gchar*)user_data;
+void edit_command(GtkWidget *button, gpointer user_data){
+  editValues *valuesEdit = user_data;
+
+  gchar* text = (gchar*)valuesEdit->id;
   gchar *gstr = text;
     char str[strlen(gstr) + 1]; // allocate memory for C string
     strcpy(str, gstr); // copy gchar string to C string
@@ -57,11 +64,12 @@ void edit_command(GtkWidget *button, gpointer user_data){
     }
   GtkWidget *parent_container = gtk_widget_get_parent(button);
   GtkWidget *parents_parent_container = gtk_widget_get_parent(parent_container);
-  edit_dialog(parents_parent_container, new_id);
+  edit_dialog(parents_parent_container, new_id, valuesEdit->WindowWidget, "Edit Command");
 
 }
 
-void build_list_item(double id, gchar *name, gchar *command){
+
+void build_list_item(double id, gchar *name, gchar *command, GtkWidget *window){
 
   //gtk_widget_set_halign (box2, GTK_ALIGN_CENTER);
   GtkWidget *label = gtk_label_new (name);
@@ -103,8 +111,12 @@ void build_list_item(double id, gchar *name, gchar *command){
   gtk_box_append(GTK_BOX(fixed_container), GTK_WIDGET(button_grid));
 
   gchar *edit_command_id  = g_strdup_printf("%s%g", "edit_", id);
+  g_print ("%s\n", edit_command_id);
+  editValues *valuesEdit = g_new(editValues, 1);
+    valuesEdit->id = edit_command_id;
+    valuesEdit->WindowWidget = window;
   GtkWidget *edit_button = gtk_button_new_with_label ("Edit");
-  g_signal_connect(edit_button, "clicked", G_CALLBACK(edit_command), edit_command_id);
+  g_signal_connect(edit_button, "clicked", G_CALLBACK(edit_command), valuesEdit);
   gtk_box_append(GTK_BOX(button_grid2), edit_button);
 
   GtkWidget *remove_button = gtk_button_new_with_label ("Remove");
@@ -130,5 +142,6 @@ GtkStyleContext *context;
   gtk_box_append(GTK_BOX(list_item_row_container), separator);
   gtk_box_append(GTK_BOX(commands_container), list_item_row_container);
 }
+
 
 

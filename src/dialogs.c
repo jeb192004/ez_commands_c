@@ -77,6 +77,7 @@ typedef struct {
     double value2;
     GtkWidget *TitleEntry;
     GtkWidget *CommandEntry;
+    GtkWidget *WindowWidget;
 } editValues;
 
 void edit_button_clicked(GtkButton *button, gint response_id, gpointer user_data) {
@@ -94,8 +95,16 @@ void edit_button_clicked(GtkButton *button, gint response_id, gpointer user_data
       }else if (text2 == NULL || strlen(text2) == 0) {
         g_print("Command is empty or null.\n");
       } else {
-        edit_json_with_new_command(text1, text2, valuesEdit->value2);
-        gtk_widget_unparent(parent);
+        double id = valuesEdit->value2;
+        double id_new;
+        if(id == 0000){
+          id_new = generate_new_id();
+        }else{
+          id_new = id;
+        }
+        g_print ("%f\n", id_new);
+        //edit_json_with_new_command(text1, text2, id_new, valuesEdit->WindowWidget);
+        //gtk_widget_unparent(parent);
       }
 
       //remove_command_from_json(valuesEdit->value2);
@@ -108,14 +117,14 @@ void edit_button_clicked(GtkButton *button, gint response_id, gpointer user_data
 
 }
 
-void edit_dialog (GtkWidget *parent, char *message, double new_id){
+void edit_dialog (GtkWidget *parent, double new_id, GtkWidget *window1, char *message){
  GtkWidget *dialog, *edit_title_entry, *edit_command_entry, *content_area;
  GtkDialogFlags flags;
 
  // Create the widgets
  flags = GTK_DIALOG_DESTROY_WITH_PARENT;
- dialog = gtk_dialog_new_with_buttons ("Edit",
-                                       GTK_WINDOW (window),
+ dialog = gtk_dialog_new_with_buttons (message,
+                                       GTK_WINDOW (window1),
                                        flags,
                                        "Submit",
                                        GTK_RESPONSE_OK,
@@ -147,6 +156,7 @@ void edit_dialog (GtkWidget *parent, char *message, double new_id){
     valuesEdit->value2 = new_id;
     valuesEdit->TitleEntry = edit_title_entry;
     valuesEdit->CommandEntry = edit_command_entry;
+    valuesEdit->WindowWidget = window1;
   // Connect the "response" signal to the callback function
     g_signal_connect(dialog, "response", G_CALLBACK(edit_button_clicked), valuesEdit);
   //ADD THE COMMAND ENTRY TO THE MAIN CONTAINER
@@ -169,7 +179,7 @@ void edit_dialog (GtkWidget *parent, char *message, double new_id){
  // Add the label, and show everything we’ve added
 
 
- gtk_widget_show (dialog);
+ gtk_widget_show(dialog);
 }
 
 
