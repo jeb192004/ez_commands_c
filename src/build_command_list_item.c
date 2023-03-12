@@ -21,11 +21,11 @@ void remove_command(GtkWidget *button, gpointer user_data){
 
     char *pos = strstr(str, "_");
     char *aft_delimiter;
-    double new_id;
+    //double new_id;
     if (pos) {
         *pos = '\0'; // replace delimiter with null character
         aft_delimiter = pos + 1;
-        new_id = atoi(aft_delimiter);
+        //new_id = atoi(aft_delimiter);
         printf("First half of string: %s\n", aft_delimiter);
     } else {
         printf("Delimiter not found.\n");
@@ -33,7 +33,7 @@ void remove_command(GtkWidget *button, gpointer user_data){
   GtkWidget *parent_container = gtk_widget_get_parent(button);
   GtkWidget *parents_parent_container = gtk_widget_get_parent(parent_container);
   GtkWidget *container_to_remove = gtk_widget_get_parent(parents_parent_container);
-    warning_dialog(container_to_remove, "Are you sure you want to remove that command?\n\nThis can not be undone.", new_id);
+    warning_dialog(container_to_remove, "Are you sure you want to remove that command?\n\nThis can not be undone.", aft_delimiter);
 
 }
 
@@ -69,7 +69,7 @@ void edit_command(GtkWidget *button, gpointer user_data){
 }
 
 
-void build_list_item(double id, gchar *name, gchar *command, GtkWidget *window){
+void build_list_item(gchar *aft_delimiter, gchar *name, gchar *command, GtkWidget *window){
 
   //gtk_widget_set_halign (box2, GTK_ALIGN_CENTER);
   GtkWidget *label = gtk_label_new (name);
@@ -92,7 +92,7 @@ void build_list_item(double id, gchar *name, gchar *command, GtkWidget *window){
       GtkWidget *clone = gtk_button_new_with_label ("Clone");
       GtkWidget *push = gtk_button_new_with_label ("Push");
       GtkWidget *pull = gtk_button_new_with_label ("Pull");
-      char *clone_command = g_strdup_printf("%s%g", "clone_", id), *push_command = g_strdup_printf("%s%g", "push_", id), *pull_command = g_strdup_printf("%s%g", "pull_", id);
+      char *clone_command = g_strdup_printf("%s%s", "clone_", aft_delimiter), *push_command = g_strdup_printf("%s%s", "push_", aft_delimiter), *pull_command = g_strdup_printf("%s%s", "pull_", aft_delimiter);
 
       //voi\ngtk_grid_attach(GtkGrid *grid, GtkWidget *child, int left, int top, int width, int height);
       gtk_grid_attach(GTK_GRID(button_grid), clone, 0, 0, 1, 1);
@@ -102,7 +102,7 @@ void build_list_item(double id, gchar *name, gchar *command, GtkWidget *window){
         g_signal_connect(push, "clicked", G_CALLBACK(command_button_clicked), push_command);
         g_signal_connect(pull, "clicked", G_CALLBACK(command_button_clicked), pull_command);
   } else {
-      gchar *copy_command  = g_strdup_printf("%s%g", "copy_", id);
+      gchar *copy_command  = g_strdup_printf("%s%s", "copy_", aft_delimiter);
       GtkWidget *copy = gtk_button_new_with_label ("Copy");
       g_signal_connect(copy, "clicked", G_CALLBACK(command_button_clicked), copy_command);
       gtk_grid_attach(GTK_GRID(button_grid), copy, 0, 0, 1, 1);
@@ -110,7 +110,7 @@ void build_list_item(double id, gchar *name, gchar *command, GtkWidget *window){
 
   gtk_box_append(GTK_BOX(fixed_container), GTK_WIDGET(button_grid));
 
-  gchar *edit_command_id  = g_strdup_printf("%s%g", "edit_", id);
+  gchar *edit_command_id  = g_strdup_printf("%s%s", "edit_", aft_delimiter);
   g_print ("%s\n", edit_command_id);
   editValues *valuesEdit = g_new(editValues, 1);
     valuesEdit->id = edit_command_id;
@@ -129,7 +129,7 @@ GtkStyleContext *context;
   gtk_css_provider_load_from_data (provider, ".remove_button {color: red; font-size: 12pt;} button{padding:10px;}", -1);
   gtk_style_context_add_provider (context, GTK_STYLE_PROVIDER (provider), GTK_STYLE_PROVIDER_PRIORITY_USER);
   gtk_box_append(GTK_BOX(button_grid2), remove_button);
-  gchar *remove_command_id  = g_strdup_printf("%s%g", "remove_", id);
+  gchar *remove_command_id  = g_strdup_printf("%s%s", "remove_", aft_delimiter);
   g_signal_connect(remove_button, "clicked", G_CALLBACK(remove_command), remove_command_id);
   gtk_box_append(GTK_BOX(fixed_container), GTK_WIDGET(button_grid2));
   gtk_widget_set_halign(GTK_WIDGET(button_grid2), GTK_ALIGN_END);

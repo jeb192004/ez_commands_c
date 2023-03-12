@@ -11,14 +11,14 @@
 extern JsonNode *jsonArray;
 extern GtkWidget *commands_container;
 
-double generate_new_id(void){
-  double new_id;
+gchar* generate_new_id(void){
+  gchar *new_id;
 
   time_t now = time(NULL);
     struct tm *t = localtime(&now);
     char id[32];
     strftime(id, sizeof(id), "%Y%m%d%H%M%S", t);
-    new_id = strtod(id, NULL);
+    new_id = g_strdup_printf("%s", id);
 
   return new_id;
 }
@@ -56,9 +56,9 @@ void build_list(GtkWidget *window){
               JsonNode *id_node = json_object_get_member(object, "id");
               JsonNode *command_node = json_object_get_member(object, "command");
               const gchar *name = json_node_get_string(name_node);
-              const double id = json_node_get_double(id_node);
+              const gchar *id = json_node_get_string(id_node);
               const gchar *command = json_node_get_string(command_node);
-              g_print("Element %u: ID=%g -> Name=%s -> COMMAND=%s \n", i, id, name, command);
+              g_print("Element %u: ID=%s -> Name=%s -> COMMAND=%s \n", i, id, name, command);
               build_list_item(id, name, command, window);
 
 
@@ -78,11 +78,11 @@ void run_command(gchar *buttonText){
 
     char *pos = strstr(str, "_");
     char *substr, *aft_delimiter;
-    double new_id;
+    //double new_id;
     if (pos) {
         *pos = '\0'; // replace delimiter with null character
         aft_delimiter = pos + 1;
-        new_id = atoi(aft_delimiter);
+        //new_id = atoi(aft_delimiter);
         substr = str; // substring starts from the beginning
         printf("First half of string: %s\n", aft_delimiter);
     } else {
@@ -100,10 +100,10 @@ void run_command(gchar *buttonText){
               JsonNode *id_node = json_object_get_member(object, "id");
               JsonNode *command_node = json_object_get_member(object, "command");
               const gchar *name = json_node_get_string(name_node);
-              const double id = json_node_get_double(id_node);
+              const gchar *id = json_node_get_string(id_node);
               const gchar *command = json_node_get_string(command_node);
               if(strcmp(substr, "copy") ==0 ||strcmp(substr, "clone") == 0||strcmp(substr, "push") ==0||strcmp(substr, "pull") ==0){
-                if (new_id == id) {
+                if (aft_delimiter == id) {
                   gchar *new_command;
                   if(strcmp(substr, "clone")==0){
                     new_command = replace (command, "git push", "git clone");
@@ -159,10 +159,10 @@ void save_commands_file(const gchar* json_string) {
 
 
 void build_json_with_new_command(gchar *title, gchar *command, GtkWidget *window){
-  double id = generate_new_id();
+  gchar *id = generate_new_id();
   JsonNode *node1 = json_node_new (JSON_NODE_OBJECT);
   JsonObject *object1 = json_object_new();
-  json_object_set_int_member(object1, "id", id);
+  json_object_set_string_member(object1, "id", id);
   json_object_set_string_member(object1, "name", title);
   json_object_set_string_member (object1, "command", command);
   json_node_set_object(node1, object1);
@@ -186,8 +186,8 @@ void build_json_with_new_command(gchar *title, gchar *command, GtkWidget *window
 }
 
 
-void remove_command_from_json(double id_to_remove){
-  g_print ("\n%f\n", id_to_remove);
+void remove_command_from_json(gchar *id_to_remove){
+  g_print ("\n%sID: \n", id_to_remove);
   JsonArray *new_array = json_array_new ();
 
   if (JSON_NODE_HOLDS_ARRAY(jsonArray)) {
@@ -201,12 +201,13 @@ void remove_command_from_json(double id_to_remove){
               JsonNode *id_node = json_object_get_member(object, "id");
               JsonNode *command_node = json_object_get_member(object, "command");
               const gchar *name = json_node_get_string(name_node);
-              const double id = json_node_get_double(id_node);
+              const gchar *id = json_node_get_string(id_node);
               const gchar *command = json_node_get_string(command_node);
-              if(id!=id_to_remove){
+              if(strcmp(id, id_to_remove)!=0){
+                //g_print ("%s:%s\n", id, id_to_remove);
                 JsonNode *node1 = json_node_new (JSON_NODE_OBJECT);
               JsonObject *object1 = json_object_new();
-              json_object_set_int_member(object1, "id", id);
+              json_object_set_string_member(object1, "id", id);
               json_object_set_string_member(object1, "name", name);
               json_object_set_string_member (object1, "command", command);
               json_node_set_object(node1, object1);
@@ -232,8 +233,8 @@ void remove_command_from_json(double id_to_remove){
 
 }
 
-void edit_json_with_new_command(gchar *new_title, gchar *new_command, double new_id, GtkWidget *window){
-  g_print ("\n%f\n", new_id);
+void edit_json_with_new_command(gchar *new_title, gchar *new_command, gchar *new_id, GtkWidget *window){
+  g_print ("\n%s\n", new_id);
   JsonArray *new_array = json_array_new ();
 
   if (JSON_NODE_HOLDS_ARRAY(jsonArray)) {
@@ -247,12 +248,12 @@ void edit_json_with_new_command(gchar *new_title, gchar *new_command, double new
               JsonNode *id_node = json_object_get_member(object, "id");
               JsonNode *command_node = json_object_get_member(object, "command");
               const gchar *name = json_node_get_string(name_node);
-              const double id = json_node_get_double(id_node);
+              const gchar *id = json_node_get_string(id_node);
               const gchar *command = json_node_get_string(command_node);
               if(id!=new_id){
                 JsonNode *node1 = json_node_new (JSON_NODE_OBJECT);
               JsonObject *object1 = json_object_new();
-              json_object_set_int_member(object1, "id", id);
+              json_object_set_string_member(object1, "id", id);
               json_object_set_string_member(object1, "name", name);
               json_object_set_string_member (object1, "command", command);
               json_node_set_object(node1, object1);
@@ -260,7 +261,7 @@ void edit_json_with_new_command(gchar *new_title, gchar *new_command, double new
               }else if(id==new_id){
                 JsonNode *node1 = json_node_new (JSON_NODE_OBJECT);
               JsonObject *object1 = json_object_new();
-              json_object_set_int_member(object1, "id", id);
+              json_object_set_string_member(object1, "id", id);
               json_object_set_string_member(object1, "name", new_title);
               json_object_set_string_member (object1, "command", new_command);
               json_node_set_object(node1, object1);
@@ -286,4 +287,6 @@ void edit_json_with_new_command(gchar *new_title, gchar *new_command, double new
     }else{g_error ("JSON IS NOT AN ARRAY");}
 
 }
+
+
 

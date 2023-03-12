@@ -6,18 +6,22 @@ extern GtkWidget *window;
 
 typedef struct {
     GtkWidget *value1;
-    double value2;
+    gchar *value_id;
 
-} MyValues;
+} RemoveValues;
 
 void ok_button_clicked(GtkButton *button, gint response_id, gpointer user_data) {
-  MyValues *values = user_data;
+  RemoveValues *values = user_data;
 
   GtkWidget *parent = values->value1;
+  gchar *id = values->value_id;
+  const gchar *widget_name = gtk_widget_get_name(parent);
+  g_print("Widget name: %s\n", widget_name);
+  g_print("ID in dialog file ok_button_clicked: %s\n", values->value_id);
   if (response_id == GTK_RESPONSE_OK) {
   if (parent != NULL) {
-      g_print("%s", "parent exist");
-      remove_command_from_json(values->value2);
+      g_print("%s%s\n", "parent exist", id);
+      remove_command_from_json(id);
       gtk_widget_unparent(parent);
 
   }
@@ -27,10 +31,9 @@ void ok_button_clicked(GtkButton *button, gint response_id, gpointer user_data) 
 
 }
 
-void warning_dialog (GtkWidget *parent, char *message, double new_id){
+void warning_dialog (GtkWidget *parent, char *message, gchar *new_id){
  GtkWidget *dialog, *label, *content_area;
  GtkDialogFlags flags;
-
  // Create the widgets
  flags = GTK_DIALOG_DESTROY_WITH_PARENT;
  dialog = gtk_dialog_new_with_buttons ("Warning",
@@ -41,11 +44,12 @@ void warning_dialog (GtkWidget *parent, char *message, double new_id){
                                        "Cancel",
                                        GTK_RESPONSE_CANCEL,
                                        NULL);
-
-    MyValues *values = g_new(MyValues, 1);
+    printf("ID in dialog file warning_dialog: %s\n", new_id);
+    RemoveValues *values = g_new(RemoveValues, 1);
     values->value1 = parent;
-    values->value2 = new_id;
-
+    values->value_id = new_id;
+    printf("print after setting to vlaues: %s\n", new_id);
+    printf("print values->value_id after setting it: %s\n", values->value_id);
   // Connect the "response" signal to the callback function
     g_signal_connect(dialog, "response", G_CALLBACK(ok_button_clicked), values);
 
@@ -74,7 +78,7 @@ void warning_dialog (GtkWidget *parent, char *message, double new_id){
 
 typedef struct {
     GtkWidget *value1;
-    double value2;
+    gchar *value2;
     GtkWidget *TitleEntry;
     GtkWidget *CommandEntry;
     GtkWidget *WindowWidget;
@@ -95,14 +99,14 @@ void edit_button_clicked(GtkButton *button, gint response_id, gpointer user_data
       }else if (text2 == NULL || strlen(text2) == 0) {
         g_print("Command is empty or null.\n");
       } else {
-        double id = valuesEdit->value2;
-        double id_new;
+        gchar *id = valuesEdit->value2;
+        gchar *id_new;
         if(id == 0000){
           id_new = generate_new_id();
         }else{
           id_new = id;
         }
-        g_print ("%f\n", id_new);
+        g_print ("%s\n", id_new);
         //edit_json_with_new_command(text1, text2, id_new, valuesEdit->WindowWidget);
         //gtk_widget_unparent(parent);
       }
@@ -117,7 +121,7 @@ void edit_button_clicked(GtkButton *button, gint response_id, gpointer user_data
 
 }
 
-void edit_dialog (GtkWidget *parent, double new_id, GtkWidget *window1, char *message){
+void edit_dialog (GtkWidget *parent, gchar *new_id, GtkWidget *window1, char *message){
  GtkWidget *dialog, *edit_title_entry, *edit_command_entry, *content_area;
  GtkDialogFlags flags;
 
