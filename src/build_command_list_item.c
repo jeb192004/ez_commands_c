@@ -57,14 +57,15 @@ void edit_command(GtkWidget *button, gpointer user_data){
     if (pos) {
         *pos = '\0'; // replace delimiter with null character
         aft_delimiter = pos + 1;
-        new_id = atoi(aft_delimiter);
-        printf("First half of string: %s\n", aft_delimiter);
+        //new_id = atoi(aft_delimiter);
+        //printf("First half of string: %s\n", aft_delimiter);
     } else {
-        printf("Delimiter not found.\n");
+        //printf("Delimiter not found.\n");
     }
   GtkWidget *parent_container = gtk_widget_get_parent(button);
   GtkWidget *parents_parent_container = gtk_widget_get_parent(parent_container);
-  edit_dialog(parents_parent_container, new_id, valuesEdit->WindowWidget, "Edit Command");
+  GtkWidget *container_to_remove = gtk_widget_get_parent(parents_parent_container);
+  edit_dialog(container_to_remove, aft_delimiter, valuesEdit->WindowWidget, "Edit Command");
 
 }
 
@@ -111,7 +112,7 @@ void build_list_item(gchar *aft_delimiter, gchar *name, gchar *command, GtkWidge
   gtk_box_append(GTK_BOX(fixed_container), GTK_WIDGET(button_grid));
 
   gchar *edit_command_id  = g_strdup_printf("%s%s", "edit_", aft_delimiter);
-  g_print ("%s\n", edit_command_id);
+
   editValues *valuesEdit = g_new(editValues, 1);
     valuesEdit->id = edit_command_id;
     valuesEdit->WindowWidget = window;

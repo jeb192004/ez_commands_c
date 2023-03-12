@@ -47,7 +47,7 @@ GtkWidget* build_main_view(GtkApplication *app){
   gtk_widget_set_margin_end (main_box, 10);
   //ADD THE MAIN CONTAINER TO THE WINDOW
   gtk_window_set_child(GTK_WINDOW(window), main_box);
-
+/*
   //CREATE THE ENTRY FOR THE TITLE
   title_entry = gtk_entry_new();
   gtk_entry_set_placeholder_text(GTK_ENTRY(title_entry), "Title");
@@ -72,7 +72,7 @@ GtkWidget* build_main_view(GtkApplication *app){
   g_signal_connect(button1, "clicked", G_CALLBACK(on_add_command_button_clicked), window);
   g_object_set_data(G_OBJECT(window), "entry1", title_entry);
   g_object_set_data(G_OBJECT(window), "entry2", command_entry);
-
+*/
   box = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
   gtk_box_append (GTK_BOX(main_box), box);
 // Create a scrolled window to contain the box
@@ -92,7 +92,7 @@ GtkWidget* build_main_view(GtkApplication *app){
 
 static void on_open_add_command_dialog_button_clicked(GtkMenuButton *button, gpointer user_data){
   GtkWidget *window = (GtkWidget*)user_data;
-  edit_dialog(window, 0000, window, "Add New Command");
+  edit_dialog(window, "0000", window, "Add New Command");
 }
 
 static void on_popup_button_clicked(GtkButton *button, gpointer user_data) {
@@ -121,3 +121,4 @@ GtkWidget *header_bar = gtk_header_bar_new();
 gtk_window_set_titlebar(GTK_WINDOW(window), header_bar);
 
 }
+

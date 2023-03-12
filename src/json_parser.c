@@ -58,7 +58,7 @@ void build_list(GtkWidget *window){
               const gchar *name = json_node_get_string(name_node);
               const gchar *id = json_node_get_string(id_node);
               const gchar *command = json_node_get_string(command_node);
-              g_print("Element %u: ID=%s -> Name=%s -> COMMAND=%s \n", i, id, name, command);
+              //g_print("Element %u: ID=%s -> Name=%s -> COMMAND=%s \n", i, id, name, command);
               build_list_item(id, name, command, window);
 
 
@@ -103,7 +103,7 @@ void run_command(gchar *buttonText){
               const gchar *id = json_node_get_string(id_node);
               const gchar *command = json_node_get_string(command_node);
               if(strcmp(substr, "copy") ==0 ||strcmp(substr, "clone") == 0||strcmp(substr, "push") ==0||strcmp(substr, "pull") ==0){
-                if (aft_delimiter == id) {
+                if (strcmp(id, aft_delimiter)==0) {
                   gchar *new_command;
                   if(strcmp(substr, "clone")==0){
                     new_command = replace (command, "git push", "git clone");
@@ -187,7 +187,7 @@ void build_json_with_new_command(gchar *title, gchar *command, GtkWidget *window
 
 
 void remove_command_from_json(gchar *id_to_remove){
-  g_print ("\n%sID: \n", id_to_remove);
+
   JsonArray *new_array = json_array_new ();
 
   if (JSON_NODE_HOLDS_ARRAY(jsonArray)) {
@@ -204,7 +204,7 @@ void remove_command_from_json(gchar *id_to_remove){
               const gchar *id = json_node_get_string(id_node);
               const gchar *command = json_node_get_string(command_node);
               if(strcmp(id, id_to_remove)!=0){
-                //g_print ("%s:%s\n", id, id_to_remove);
+
                 JsonNode *node1 = json_node_new (JSON_NODE_OBJECT);
               JsonObject *object1 = json_object_new();
               json_object_set_string_member(object1, "id", id);
@@ -250,7 +250,7 @@ void edit_json_with_new_command(gchar *new_title, gchar *new_command, gchar *new
               const gchar *name = json_node_get_string(name_node);
               const gchar *id = json_node_get_string(id_node);
               const gchar *command = json_node_get_string(command_node);
-              if(id!=new_id){
+              if(strcmp(id, new_id)!=0){
                 JsonNode *node1 = json_node_new (JSON_NODE_OBJECT);
               JsonObject *object1 = json_object_new();
               json_object_set_string_member(object1, "id", id);
@@ -258,7 +258,7 @@ void edit_json_with_new_command(gchar *new_title, gchar *new_command, gchar *new
               json_object_set_string_member (object1, "command", command);
               json_node_set_object(node1, object1);
               json_array_add_element(new_array, node1);
-              }else if(id==new_id){
+              }else if(strcmp(id, new_id)==0){
                 JsonNode *node1 = json_node_new (JSON_NODE_OBJECT);
               JsonObject *object1 = json_object_new();
               json_object_set_string_member(object1, "id", id);
