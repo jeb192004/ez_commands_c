@@ -14,9 +14,9 @@ ez_commands_deps = [
   dependency('gtk4'),
   dependency('libadwaita-1'),
   dependency('json-glib-1.0'),
-  ]
+]
 
- gnome.compile_resources('ez_commands-resources',
+ez_commands_sources += gnome.compile_resources('ez_commands-resources',
   'ez_commands.gresource.xml',
   c_name: 'ez_commands'
 )

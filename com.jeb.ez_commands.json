@@ -1,7 +1,7 @@
 {
     "app-id" : "com.jeb.ez_commands",
     "runtime" : "org.gnome.Platform",
-    "runtime-version" : "master",
+    "runtime-version" : "43",
     "sdk" : "org.gnome.Sdk",
     "command" : "ez_commands",
     "finish-args" : [
@@ -9,18 +9,8 @@
         "--share=ipc",
         "--socket=fallback-x11",
         "--device=dri",
-        "--socket=wayland",
-        "--filesystem=xdg-documents"
+        "--socket=wayland"
     ],
-    "permissions": {
-        "filesystems": [
-            {
-                "path": "xdg-documents",
-                "readwrite": true
-            }
-        ],
-        "system-theme": true
-    },
     "cleanup" : [
         "/include",
         "/lib/pkgconfig",
@@ -37,9 +27,6 @@
             "name" : "ez_commands",
             "builddir" : true,
             "buildsystem" : "meson",
-            "config-opts": [
-                "-Dgtk=4.0"
-            ],
             "sources" : [
                 {
                     "type" : "git",
