@@ -9,8 +9,19 @@
         "--share=ipc",
         "--socket=fallback-x11",
         "--device=dri",
-        "--socket=wayland"
+        "--socket=wayland",
+        "--socket=wayland",
+        "--filesystem=xdg-documents"
     ],
+    "permissions": {
+        "filesystems": [
+            {
+                "path": "xdg-documents",
+                "readwrite": true
+            }
+        ],
+        "system-theme": true
+    },
     "cleanup" : [
         "/include",
         "/lib/pkgconfig",

@@ -49,7 +49,7 @@ void warning_dialog (GtkWidget *parent, char *message, gchar *new_id){
     RemoveValues *values = g_new(RemoveValues, 1);
     values->value1 = parent;
     values->value_id = num;
-    printf("print after setting to vlaues: %s\n", new_id);
+    printf("print after setting to values: %s\n", new_id);
     printf("print values->value_id after setting it: %lld\n", values->value_id);
   // Connect the "response" signal to the callback function
     g_signal_connect(dialog, "response", G_CALLBACK(ok_button_clicked), values);
@@ -106,13 +106,19 @@ void edit_button_clicked(GtkButton *button, gint response_id, gpointer user_data
       } else {
         gchar *id = str;
         gchar *id_new;
-        if(id == 0000){
+        int my_int = atoi(id);
+        bool isNewCommand = false;
+        if(my_int == 1234){
+          g_print("%s", "generate new id");
           id_new = generate_new_id();
+          isNewCommand = true;
         }else{
           id_new = id;
+          isNewCommand = false;
         }
         g_print ("%s -> %s\n", id_new, id);
-        edit_json_with_new_command(text1, text2, id_new, valuesEdit->WindowWidget);
+
+        edit_json_with_new_command(text1, text2, id_new, valuesEdit->WindowWidget, isNewCommand);
         gtk_widget_unparent(parent);
       }
 
@@ -169,6 +175,7 @@ void edit_dialog (GtkWidget *parent, gchar *new_id, GtkWidget *window1, char *me
     valuesEdit->WindowWidget = window1;
   // Connect the "response" signal to the callback function
     g_signal_connect(dialog, "response", G_CALLBACK(edit_button_clicked), valuesEdit);
+
   //ADD THE COMMAND ENTRY TO THE MAIN CONTAINER
   gtk_box_append (GTK_BOX(content_area),edit_command_entry);
 
@@ -190,6 +197,8 @@ void edit_dialog (GtkWidget *parent, gchar *new_id, GtkWidget *window1, char *me
 
 
  gtk_widget_show(dialog);
+
 }
+
 
 

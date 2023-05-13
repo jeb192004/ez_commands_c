@@ -92,7 +92,7 @@ GtkWidget* build_main_view(GtkApplication *app){
 
 static void on_open_add_command_dialog_button_clicked(GtkMenuButton *button, gpointer user_data){
   GtkWidget *window = (GtkWidget*)user_data;
-  edit_dialog(window, "0000", window, "Add New Command");
+  edit_dialog(window, "1234", window, "Add New Command");
 }
 
 static void on_popup_button_clicked(GtkButton *button, gpointer user_data) {
@@ -121,4 +121,5 @@ GtkWidget *header_bar = gtk_header_bar_new();
 gtk_window_set_titlebar(GTK_WINDOW(window), header_bar);
 
 }
+
 

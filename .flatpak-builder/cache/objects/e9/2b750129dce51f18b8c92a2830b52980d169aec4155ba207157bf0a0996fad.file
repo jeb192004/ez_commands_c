@@ -1,0 +1,4 @@
+[Application]
+name=com.jeb.ez_commands
+runtime=org.gnome.Platform/x86_64/43
+sdk=org.gnome.Sdk/x86_64/43
